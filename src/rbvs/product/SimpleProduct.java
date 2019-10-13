@@ -1,3 +1,4 @@
+package rbvs.product;
 public class SimpleProduct extends Product
 {
 public SimpleProduct ( String name, float price )

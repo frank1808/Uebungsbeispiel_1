@@ -1,3 +1,5 @@
+package rbvs.product;
+
 public abstract class Product implements IProduct
 {
 private String name;
@@ -45,20 +47,21 @@ public float getPrice ( )
 public void setPrice ( float price ) throws IllegalArgumentException
 {
         if ( price < 0 )
-                throw IllegalArgumentException;
+                throw new IllegalArgumentException();
         else
                 this.price = price;
 }
 
 public String toString ( )
 {
-        String ret = " Product [ name = " + this.getName + ", price = " + this.getPrice() " ] ";
+        String ret = " Product [ name = " + this.getName() + ", price = " + this.getPrice() +  " ] ";
+        return ret;
 }
 
 public final boolean equals ( Object obj )
 {
-        if ( obj == null || !(obj.instanceof(Product)) ) return false;
-        return this.getName( ).equals( obj.getName( ) );
+        if ( obj == null || !(obj instanceof Product ) ) return false;
+        return this.getName( ).equals( ( ( Product ) obj ).getName( ) );
 }
 
 public abstract Product deepCopy ( );

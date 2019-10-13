@@ -1,3 +1,4 @@
+package rbvs;
 public class Table
 {
 private String id;
@@ -39,8 +40,8 @@ public String toString ( )
 
 public boolean equals ( Object obj )
 {
-        if ( obj != null && obj.instanceOf ( Table ) )
-                if ( this.getTableIdentifier ( ) == obj.getTableIdentifier ( ) && this.getSeatCount ( ) == obj.getSeatCount ( ) ) //mada bi trebalo samo identifier
+        if ( obj != null && obj instanceof Table )
+                if ( this.getTableIdentifier ( ) == ( ( Table ) obj ).getTableIdentifier ( ) && this.getSeatCount ( ) == ( ( Table ) obj ).getSeatCount ( ) ) //trebalo bi samo identifier?
                         return true;
         return false;
 }

@@ -1,14 +1,18 @@
-import product.SimpleProduct;
-import product.ExtendedProduct;
-import product.CompositeProduct;
+package rbvs;
+import rbvs.product.*;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.ArrayList;
 
 public class Restaurant
 {
 
 private String name;
-private List<Table> tables = new List<Table> ( );
-private List<IProduct> productAssortment = new List<Product> ( );//mora Product a ne IProduct
-private List<Order> orderHistory = new List<Order> ( );
+private List<Table> tables = new ArrayList<Table> ( );
+private List<IProduct> productAssortment = new ArrayList<> ( );//mora Product a ne IProduct
+private List<Order> orderHistory = new ArrayList<Order> ( );
 private long uniqueOrderIdentifier = 0;
 
 public Restaurant ( String name )
@@ -37,7 +41,7 @@ public boolean createTable ( String tableIdentifier )
 
 public List<String> getTableIdentifiers ( ) //return null wenn keine Tables?
 {
-        List<String> identifiers = new List<String>  ( );
+        List<String> identifiers = new ArrayList<String>  ( );
         for ( Table table : this.tables )
                 identifiers.add ( table.getTableIdentifier ( ) );
 
@@ -50,8 +54,10 @@ public Table getSpecificTable ( String identifier )
                 return null;
 
         for ( Table table : this.tables )
-                if ( table.getTableIdentifier ( ).equals ( tableIdentifier ) )
+                if ( table.getTableIdentifier ( ).equals ( identifier ) )
                         return table;
+
+         return null;
 }
 
 public boolean addProduct ( IProduct product ) throws DuplicateProductException
@@ -60,15 +66,15 @@ public boolean addProduct ( IProduct product ) throws DuplicateProductException
                 return false;
 
         //ne moze productAssortment.contains jer mora da se koristi evaluation preko equals?
-        for ( Product produkt : this.productAssortment )
+        for ( IProduct produkt : this.productAssortment )
                 if ( produkt.equals ( product ) )
                 {
-                        throw DuplicateProductException ( produkt );
-                        return false;
+                        throw new DuplicateProductException ( produkt );
+                        //return false;
                         //ovde ne treba return?
                 }
 
-        this.productAssortment.add ( product.deepCopy ( ) );
+        this.productAssortment.add ( (IProduct) product.deepCopy ( ) );
         return true;
 
 }
@@ -83,8 +89,8 @@ public boolean addProduct ( Collection<IProduct> products ) throws DuplicateProd
 
         boolean ret = true;
 
-        for ( Product produkt : products )
-                if ( produkt != null && addProduct ( IProduct product ) == false )
+        for ( IProduct produkt : products )
+                if ( produkt != null && this.addProduct ( produkt ) == false )
                         ret = false;
 
         return ret;
@@ -92,11 +98,11 @@ public boolean addProduct ( Collection<IProduct> products ) throws DuplicateProd
 
 public List<IProduct> getProducts()
 {
-        List<IProduct> products = new List<Product>  ( );
+        List<IProduct> products = new ArrayList<>  ( );
 
-        for ( Product produkt : this.productAssortment )
+        for ( IProduct produkt : this.productAssortment )
                 if ( produkt != null ) //da li ovo treba proveravati?
-                        products.add ( produkt.deepCopy( ) );
+                        products.add ( (IProduct) produkt.deepCopy( ) );
 
         return products;
 }
@@ -109,10 +115,11 @@ public boolean orderProductForTable ( Table table, IProduct product,  int count 
         if ( !( this.tables.contains ( table ) && this.productAssortment.contains ( product ) ) )
                 return false;
 
-        List<IProduct> products = new List<Product>  ( );
-        while ( count-- )
+        List<IProduct> products = new ArrayList<>  ( );
+        while ( count > 0  )
         {
-                products.add ( product.deepCopy ( ) );
+                products.add ( (IProduct) product.deepCopy ( ) );
+                count--;
         }
 
         Order order = new Order ( generateUniqueIdentifier(), table, products );
@@ -130,7 +137,7 @@ public boolean containsProduct ( IProduct compareProduct )
 
 public IProduct findProduct ( String productName )
 {
-        for ( Product produkt : this.productAssortment )
+        for ( IProduct produkt : this.productAssortment )
                 if ( produkt.getName().equals( productName ) )
                         return produkt; //welche referenz?
         return null;
@@ -138,7 +145,7 @@ public IProduct findProduct ( String productName )
 
 private IProduct findProduct ( IProduct compareProduct )
 {
-        for ( Product produkt : this.productAssortment )
+        for ( IProduct produkt : this.productAssortment )
                 if ( produkt.equals( compareProduct ) )
                         return produkt; //welche referenz?
         return null;
@@ -152,7 +159,7 @@ private long generateUniqueIdentifier()
 
 public static List<IProduct> generateSimpleProducts ( )
 {
-        List<IProduct> simpleProducts = new List<SimpleProduct> ( );// must import product.simpleProduct
+        List<IProduct> simpleProducts = new ArrayList<> ( );// must import product.simpleProduct
 
         simpleProducts.add ( new SimpleProduct ( "sim1", 100 ) );
         simpleProducts.add ( new SimpleProduct ( "sim2", 200 ) );
@@ -207,10 +214,18 @@ public static void main ( String[] args )
         res.createTable ( "tab2" );
         res.createTable ( "tab3" );
 
-        res.addProduct ( generateSimpleProducts );
-        res.addProduct ( generateCompositeProducts );
+        try
+        {
+                res.addProduct (  res.generateSimpleProducts() );
+                res.addProduct ( res.generateCompositeProducts() );
+        }
+        catch ( DuplicateProductException dpe )
+        {
+                System.out.println ( dpe.getMessage() );
+        }
 
-        for ( Product produkt : res.getProducts() )
+
+        for ( IProduct produkt : res.getProducts() )
                 System.out.println ( produkt.toString () );
 
 

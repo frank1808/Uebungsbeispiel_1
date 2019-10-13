@@ -1,9 +1,18 @@
+package rbvs;
+import rbvs.product.IProduct;
+import rbvs.record.IRecord;
+import rbvs.record.Record;
+import ict.basics.IDeepCopy;
+import  rbvs.product.IProduct;
+
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class Order extends Record implements IDeepCopy
 {
 
-private List<IProduct> products = new List<IProduct> ( );//?
+private List<IProduct> products = new ArrayList<>( );//?
 private Table table;
 private OrderState currentState;
 
@@ -17,19 +26,19 @@ public Order ( long identifier, Table table, List<IProduct> products )
 
 public List<IProduct> getProducts ( )
 {
-        List<IProduct> ret = new List<IProduct> ( );//?
+        List<IProduct> ret = new ArrayList<> ( );//?
 
-        for ( produkt : this.products )
-                ret.add ( produkt.deepCopy ( ) );
+        for ( IProduct produkt : this.products )
+                ret.add ( (IProduct) produkt.deepCopy ( ) );
 
         return ret;
 }
 
 public boolean setState ( OrderState newStatus )
 {
-        if ( this.OrderState == OPEN )
+        if ( this.currentState == OrderState.OPEN )
         {
-                this.OrderState = newStatus;
+                this.currentState = newStatus;
                 return true;
         }
 
@@ -64,13 +73,13 @@ public Order deepCopy ( )
 
 public boolean equals ( Object obj )
 {
-        if ( obj == null || !(obj.instanceOf ( Order ) ) )
+        if ( obj == null || !(obj instanceof Order ) )
                 return false;
 
-        if ( this.currentState  != obj.currentState || !( this.table.equals ( obj.getTable ( ) ) ) ) //ovde obj mora sa getTable a ne sa Table
+        if ( this.currentState  != ( (Order) obj ).currentState || !( this.table.equals ( ( (Order) obj ).getTable ( ) ) ) ) //ovde obj mora sa getTable a ne sa Table
                 return false;
 
-        List<IProduct> objProducts = obj.getProducts ( ); //um nicht immer wieder deepCopy von obj.products zu erstellen
+        List<IProduct> objProducts = ( (Order) obj ).getProducts ( ); //um nicht immer wieder deepCopy von obj.products zu erstellen
 
         if ( this.products == null && objProducts == null )
                 return true;
@@ -81,7 +90,7 @@ public boolean equals ( Object obj )
         if ( this.products.size ( ) != objProducts.size ( ) )
                 return false;
 
-        for ( Product produkt : this.products )
+        for ( IProduct produkt : this.products )
                 if ( !( objProducts.contains ( produkt ) ) )
                         return false;
 

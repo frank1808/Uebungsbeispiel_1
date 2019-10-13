@@ -1,3 +1,5 @@
+package rbvs.record;
+
 public class Record implements IRecord
 {
 

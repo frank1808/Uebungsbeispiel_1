@@ -1,8 +1,11 @@
+package rbvs;
+import rbvs.product.IProduct;
+
 public class DuplicateProductException extends Exception
 {
 
 private IProduct product;
-private static final long serialVersionUID;
+private static final long serialVersionUID = 1L;
 
 public DuplicateProductException ( IProduct product )
 {

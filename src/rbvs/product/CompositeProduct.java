@@ -1,3 +1,4 @@
+package rbvs.product;
 import java.util.Collection;
 import java.util.ArrayList;
 
@@ -24,19 +25,24 @@ public CompositeProduct ( String name, float discountPercentage, Collection<Prod
 }
 
 public void addProduct ( Product product ) {
-        if (produkt != null)
-                this.containedProducts.add(produkt); //this.getContainedProducts() problem?
+        if ( product != null)
+                this.containedProducts.add(product); //this.getContainedProducts() problem?
 }
 
 public boolean removeProduct ( Product product ) {
         if (!(this.containedProducts.isEmpty()) && this.containedProducts.contains(product))
                 for (Product produkt : this.containedProducts) //this.getCOntainedProducts()?
                         if (product.equals(produkt))
+                        {
                                 this.containedProducts.remove(produkt); // produkt und nicht product weil produkt eigentlich die containedProducts durchsucht
+                                return true;
+                        }
+
+        return false;
 }
 
 public Collection<Product> getProducts() {
-        return this.containedProducts();
+        return this.containedProducts;
 }
 
 public float getPrice() {
@@ -45,26 +51,33 @@ public float getPrice() {
                 for (Product produkt : this.containedProducts)
                         price += produkt.getPrice();
 
-        price = (100 - this.discountPercentage) * price;
+        price = (100 - this.discount) * price;
 
         return price;
 
 }
 
 public String toString() {
-        String ret = " CompositeProduct [discount = " + this.discountPercentage + ", containedProducts = ";//ohne .toString();
+        String ret = " CompositeProduct [discount = " + this.discount + ", containedProducts = { ";//ohne .toString();
+        int count = 0;
+        int n = this.containedProducts.size();
 
         if (!(this.containedProducts.isEmpty()))
                 for (Product produkt : this.containedProducts)
+                {
+                        count++;
                         ret += produkt.toString();
+                        if ( count < n )
+                                ret += ", ";
+                }
 
-        ret += "]";
+        ret += " ]";
 
         return ret;
 }
 
 public CompositeProduct deepCopy() {
-        return new CompositeProduct(this.getName(), this.discountPercentage, this.containedProducts);
+        return new CompositeProduct(this.getName(), this.discount, this.containedProducts);
 }
 
 }
